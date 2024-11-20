@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Caminhos para os testes
+INPUT_DIR="tests/inputs"
+OUTPUT_DIR="tests/outputs"
+PROGRAM_OUT="programout"
+
+# Caminho para o executável
+EXECUTABLE="./exec"
+
+# Flag de sucesso
+SUCCESS=true
+
+# Itera pelos arquivos de entrada
+for INPUT_FILE in "$INPUT_DIR"/*.in; do
+    # Extrai o nome base do arquivo
+    TEST_NAME=$(basename "$INPUT_FILE" .in)
+
+    # Arquivo esperado de saída
+    EXPECTED_OUTPUT="$OUTPUT_DIR/$TEST_NAME.out"
+
+    # Executa o programa e redireciona o output para o arquivo temporário
+    $EXECUTABLE < "$INPUT_FILE" > "$PROGRAM_OUT"
+
+    # Compara o output do programa com o esperado
+    if diff -q "$PROGRAM_OUT" "$EXPECTED_OUTPUT" > /dev/null; then
+        echo "[PASS] $TEST_NAME"
+    else
+        echo "[FAIL] $TEST_NAME"
+        SUCCESS=false
+    fi
+done
+
+# Resultado final
+if $SUCCESS; then
+    echo "Todos os testes passaram!"
+else
+    echo "Alguns testes falharam."
+fi
+
+# Limpa o arquivo temporário
+rm -f "$PROGRAM_OUT"
+
