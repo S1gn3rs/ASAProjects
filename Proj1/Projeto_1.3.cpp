@@ -38,16 +38,16 @@ void parenthesis(vector<ll>& sequence, ll target){
         dp[i][i][sequence[i]] = {i, -1};
     }
 
-    for (ll size=2;size<=m;size++){
-        for (ll i=0;i<=m-size;i++){
+    for (ll size=2; size<=m; size++){
+        for (ll i=0; i<=m-size; i++){
             ll end=i+size-1;
 
-            for (ll a=end-1;a>=i;a--){
+            for (ll a=end-1; a>=i; a--){
                 for (auto left_entry : dp[i][a]){
                     for (auto right_entry : dp[a+1][end]){
                         ll left = left_entry.first, right = right_entry.first;
                         ll result = cayley_table[left][right];
-                        
+
                         if (dp[i][end].find(result) == dp[i][end].end()){
                             dp[i][end][result] = {a, -1};
                             dp[end][i][result] = {left, right};
@@ -62,7 +62,7 @@ void parenthesis(vector<ll>& sequence, ll target){
         cout << "1\n";
         find_string(dp, sequence, 0, m-1, target);
         cout << "\n";
-    } 
+    }
     else{
         cout << "0\n";
     }
