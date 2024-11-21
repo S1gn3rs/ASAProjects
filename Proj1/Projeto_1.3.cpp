@@ -52,6 +52,7 @@ void parenthesis(vector<ll>& sequence, ll target){
                             dp[i][end][result] = {a, -1};
                             dp[end][i][result] = {left, right};
                         }
+                        else if ((ll) dp[i][end].size() == n) break;
                     }
                 }
             }
