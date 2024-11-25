@@ -56,8 +56,10 @@ void parenthesis(vector<int>& sequence, int target){
                             dp[end][i].push_back(left);
                             dp[end][i].push_back(right);
                         }
+                        //cout << i << " " << end << " -> with result " << result << " : ";
+                        //for(auto u : dp[i][end]) cout << u << " ";cout << "\n";
                         if ((int) dp[i][end].size() == n){
-                            cout << "Entrei \n";
+                            //cout << "Entrei \n";
                             found_all = true;
                             break;
                         }
