@@ -2,63 +2,76 @@
 #include <vector>
 #include <unordered_set>
 #include <algorithm>
-#define ll long long int
 
 using namespace std;
 
-ll n, m;
-vector<vector<ll>> cayley_table;
+int n, m;
+vector<vector<int>> cayley_table;
 
-void find_string(vector<vector<vector<ll>>>& dp, vector<ll>& sequence, ll i, ll j, ll result){
+void find_string(string& expression, vector<vector<vector<int>>>& dp, vector<int>& sequence, int i, int j, int result){
 
     if (i == j) {
-        cout << sequence[i];
+        expression += to_string(sequence[i]);
         return;
+    }   
+
+    int split = 0, left_result = 0, right_result = 0;
+
+    for(int e = 0; e < (int)dp[i][j].size(); e++){
+        if(dp[i][j][e] == result){
+            split = dp[j][i][3 * e];
+            left_result = dp[j][i][3 * e + 1];
+            right_result = dp[j][i][3 * e + 2];
+            break;
+        }
     }
 
-    ll split = dp[j][i][0];
-    ll left_result = dp[j][i][1];
-    ll right_result = dp[j][i][2];
-
-    cout << "(";
-    find_string(dp, sequence, i, split, left_result);
-    cout << " ";
-    find_string(dp, sequence, split + 1, j, right_result);
-    cout << ")";
+    expression += "(";
+    find_string(expression, dp, sequence, i, split, left_result);
+    expression += " ";
+    find_string(expression, dp, sequence, split + 1, j, right_result);
+    expression += ")";
 }
 
-void parenthesis(vector<ll>& sequence, ll target){
+void parenthesis(vector<int>& sequence, int target){
 
-    vector<vector<vector<ll>>> dp(m, vector<vector<ll>>(m));
+    vector<vector<vector<int>>> dp(m, vector<vector<int>>(m));
 
-    for (ll i=0;i<m;i++) {
+    for (int i=0;i<m;i++) {
         dp[i][i].push_back(sequence[i]);
     }
 
-    for (ll size=2;size<=m;size++) {
-        for (ll i=0;i<=m-size;i++) {
-            ll end=i+size-1;
+    for (int size=2;size<=m;size++) {
+        for (int i=0;i<=m-size;i++) {
+            int end=i+size-1;
 
-            for (ll a=end-1; a>=i; a--) {
-                for (ll left : dp[i][a]) {
-                    for (ll right : dp[a+1][end]) {
-                        ll result = cayley_table[left][right];
-
-                        if (find(dp[i][end].begin(), dp[i][end].end(), result) == dp[i][end].end()) {
+            for (int a = end-1; a >= i; a--) {   
+                bool found_all = false;
+                for (int left : dp[i][a]) {
+                    for (int right : dp[a+1][end]) {
+                        int result = cayley_table[left][right];
+                        if (find(dp[i][end].begin(), dp[i][end].end(), result) == dp[i][end].end()){
                             dp[i][end].push_back(result);
-
-                            dp[end][i] = {a, left, right};
+                            dp[end][i].push_back(a);
+                            dp[end][i].push_back(left);
+                            dp[end][i].push_back(right);
+                        }
+                        if ((int) dp[i][end].size() == n){
+                            cout << "Entrei \n";
+                            found_all = true;
+                            break;
                         }
                     }
+                if(found_all) break;
                 }
             }
         }
     }
 
     if (find(dp[0][m-1].begin(), dp[0][m-1].end(), target) != dp[0][m-1].end()){
-        cout << "1\n";
-        find_string(dp, sequence, 0, m-1, target);
-        cout << "\n";
+        string expression;
+        find_string(expression, dp, sequence, 0, m-1, target);
+        cout << "1\n" << expression << "\n";
     } 
     else{
         cout << "0\n";
@@ -70,17 +83,17 @@ void parenthesis(vector<ll>& sequence, ll target){
 int main() {
     cin >> n >> m;
 
-    ll target;
-    cayley_table.assign(n+1, vector<ll>(n+1, 0));
-    vector<ll> sequence(m);
+    int target;
+    cayley_table.assign(n+1, vector<int>(n+1, 0));
+    vector<int> sequence(m);
 
-    for (ll i=1;i<=n;i++) {
-        for (ll j=1;j<=n;j++) {
+    for (int i=1;i<=n;i++) {
+        for (int j=1;j<=n;j++) {
             cin >> cayley_table[i][j];
         }
     }
 
-    for (ll i=0;i<m;i++) {
+    for (int i=0;i<m;i++) {
         cin >> sequence[i];
     }
 
