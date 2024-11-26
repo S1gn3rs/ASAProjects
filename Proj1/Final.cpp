@@ -10,6 +10,7 @@ int n, m;
 vector<vector<int>> cayley_table;
 vector<vector<vector<int>>> dp, found;
 
+
 /**
  * @brief Fiints the Cayley table with input values.
  *
@@ -25,6 +26,7 @@ void fill_cayley_table(){
     }
 }
 
+
 /**
  * @brief Constructs the expression with parentheses.
  *
@@ -37,13 +39,13 @@ void fill_cayley_table(){
  * @param col The ending index.
  * @param result The target result to achieve.
  */
-void put_parentheses(string& expression, vector<int>& sequence, int line, int col,\
-    int result){
+void put_parentheses(string& expression, vector<int>& sequence, int line,\
+    int col, int result){
 
     if (line == col) {
         expression += to_string(sequence[line]);
         return;
-    }   
+    }
 
     int split = 0, left_result = 0, right_result = 0;
 
@@ -63,6 +65,7 @@ void put_parentheses(string& expression, vector<int>& sequence, int line, int co
     expression += ")";
 }
 
+
 /**
  * @brief Computes combinations of elements between two indices.
  *
@@ -75,7 +78,7 @@ void put_parentheses(string& expression, vector<int>& sequence, int line, int co
  */
 void possible_combinations(int line, int col){
 
-    for (int c = col - 1; c >= line; c--) {   
+    for (int c = col - 1; c >= line; c--) {
         bool found_all = false;
         for (int left_entry : dp[line][c]) {
             for (int right_entry : dp[c + 1][col]) {
@@ -98,10 +101,11 @@ void possible_combinations(int line, int col){
     return;
 }
 
+
 /**
  * @brief Constructs the dynamic programming table for the given sequence.
  *
- * This function initializes the dynamic programming table and fiints it
+ * This function initializes the dynamic programming table and fills it
  * based on the possible combinations of elements in the sequence. The table
  * is used to store the results of subproblems to avoid redundant calculations.
  *
@@ -126,6 +130,7 @@ void construct_dynamic_table(vector<int>& sequence){
     }
     return;
 }
+
 
 int main() {
     IOS;
