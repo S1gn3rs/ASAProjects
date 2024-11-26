@@ -36,7 +36,6 @@ void find_string(string& expression, vector<vector<vector<int>>>& dp, vector<int
 void parenthesis(vector<int>& sequence, int target){
 
     vector<vector<vector<int>>> dp(m, vector<vector<int>>(m));
-    vector<vector<vector<int>>> found(m, vector<vector<int>>(m, vector<int>(n + 1, 0)));
 
     for (int i=0;i<m;i++) {
         dp[i][i].push_back(sequence[i]);
@@ -51,14 +50,16 @@ void parenthesis(vector<int>& sequence, int target){
                 for (int left : dp[i][a]) {
                     for (int right : dp[a+1][end]) {
                         int result = cayley_table[left][right];
-                        if (found[i][end][result] == 0){
-                            found[i][end][result] = 1;
+                        if (find(dp[i][end].begin(), dp[i][end].end(), result) == dp[i][end].end()){
                             dp[i][end].push_back(result);
                             dp[end][i].push_back(a);
                             dp[end][i].push_back(left);
                             dp[end][i].push_back(right);
                         }
+                        //cout << i << " " << end << " -> with result " << result << " : ";
+                        //for(auto u : dp[i][end]) cout << u << " ";cout << "\n";
                         if ((int) dp[i][end].size() == n){
+                            //cout << "Entrei \n";
                             found_all = true;
                             break;
                         }
@@ -82,7 +83,6 @@ void parenthesis(vector<int>& sequence, int target){
 }
 
 int main() {
-    ios::sync_with_stdio(0);cin.tie(0);
     cin >> n >> m;
 
     int target;

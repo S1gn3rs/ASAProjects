@@ -2,7 +2,7 @@
 EXEC = exec
 
 # Nome do arquivo fonte
-SRC = Projeto_1.3.cpp
+SRC = Final.cpp
 
 # Compilador
 CXX = g++

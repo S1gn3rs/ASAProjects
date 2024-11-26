@@ -8,8 +8,7 @@ using namespace std;
 
 int n, m;
 vector<vector<int>> cayley_table;
-vector<vector<unordered_map<int, pair<int, int>>>> dp;
-
+vector<vector<vector<int>>> dp, found;
 
 /**
  * @brief Fiints the Cayley table with input values.
@@ -26,7 +25,6 @@ void fill_cayley_table(){
     }
 }
 
-
 /**
  * @brief Constructs the expression with parentheses.
  *
@@ -42,25 +40,28 @@ void fill_cayley_table(){
 void put_parentheses(string& expression, vector<int>& sequence, int line, int col,\
     int result){
 
-    if (line == col){
+    if (line == col) {
         expression += to_string(sequence[line]);
         return;
-    }
-    auto it_1 = dp[line][col].find(result);
-    auto it_2 = dp[col][line].find(result);
-    if (it_1 != dp[line][col].end()){
-        int split = it_1->second.first;
-        int left_result = it_2->second.first;
-        int right_result = it_2->second.second;
+    }   
 
-        expression += "(";
-        put_parentheses(expression, sequence, line, split, left_result);
-        expression += " ";
-        put_parentheses(expression, sequence, split + 1, col, right_result);
-        expression += ")";
+    int split = 0, left_result = 0, right_result = 0;
+
+    for(int e = 0; e < (int)dp[line][col].size(); e++){
+        if(dp[line][col][e] == result){
+            split = dp[col][line][3 * e];
+            left_result = dp[col][line][3 * e + 1];
+            right_result = dp[col][line][3 * e + 2];
+            break;
+        }
     }
+
+    expression += "(";
+    put_parentheses(expression, sequence, line, split, left_result);
+    expression += " ";
+    put_parentheses(expression, sequence, split + 1, col, right_result);
+    expression += ")";
 }
-
 
 /**
  * @brief Computes combinations of elements between two indices.
@@ -74,32 +75,28 @@ void put_parentheses(string& expression, vector<int>& sequence, int line, int co
  */
 void possible_combinations(int line, int col){
 
-    for (int c = col - 1; c >= line; c--){
-
+    for (int c = col - 1; c >= line; c--) {   
         bool found_all = false;
-        for (pair< int, pair<int, int>> left_entry : dp[line][c]){
-
-            for (pair< int, pair<int, int>> right_entry : dp[c+1][col]){
-
-                int resLeft = left_entry.first, resRight = right_entry.first;
-                int result = cayley_table[resLeft][resRight];
-
-                if (dp[line][col].find(result) == dp[line][col].end()){
-                    dp[line][col][result] = {c, -1};
-                    dp[col][line][result] = {resLeft, resRight};
+        for (int left_entry : dp[line][c]) {
+            for (int right_entry : dp[c + 1][col]) {
+                int result = cayley_table[left_entry][right_entry];
+                if (found[line][col][result] == 0){
+                    found[line][col][result] = 1;
+                    dp[line][col].push_back(result);
+                    dp[col][line].push_back(c);
+                    dp[col][line].push_back(left_entry);
+                    dp[col][line].push_back(right_entry);
                 }
-                
                 if ((int) dp[line][col].size() == n){
                     found_all = true;
                     break;
                 }
             }
-            if(found_all) break;
+        if(found_all) break;
         }
     }
     return;
 }
-
 
 /**
  * @brief Constructs the dynamic programming table for the given sequence.
@@ -113,11 +110,14 @@ void possible_combinations(int line, int col){
  */
 void construct_dynamic_table(vector<int>& sequence){
 
-    dp.assign(m, vector<unordered_map<int, pair<int, int>>>(m));
-    //main diagonal, seqValue : {index, -1}
-    for (int i = 0; i < m; i++){
-        dp[i][i][sequence[i]] = {i, -1};
+    dp.assign(m, vector<vector<int>>(m));
+    found.assign(m, vector<vector<int>>(m, vector<int>(n + 1, 0)));
+
+    for (int i=0;i<m;i++) {
+        dp[i][i].push_back(sequence[i]);
+        found[i][i][sequence[i]] = 1;
     }
+
     for (int size = 2; size <= m; size++){
         for (int line = 0; line <= m - size; line++){
             int col = line + size - 1;
@@ -126,8 +126,6 @@ void construct_dynamic_table(vector<int>& sequence){
     }
     return;
 }
-
-
 
 int main() {
     IOS;
@@ -142,7 +140,7 @@ int main() {
 
     construct_dynamic_table(sequence);
 
-    if (dp[0][m-1].find(target) != dp[0][m-1].end()){
+    if (found[0][m-1][target]){
         string expression;
         put_parentheses(expression, sequence, 0, m-1, target);
         cout << "1\n" << expression << "\n";
