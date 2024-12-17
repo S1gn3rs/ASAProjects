@@ -2,14 +2,14 @@
 EXEC = exec
 
 # Nome do arquivo fonte
-SRC = Joao.cpp
+SRC = Final.cpp
 
 # Compilador
 CXX = g++
 
 # Flags de compilação
-CXXFLAGS = -Wall -Wextra -pedantic -Werror -std=c++20 \
-           -O2 -fsanitize=address,undefined -fstack-protector-strong
+CXXFLAGS = -Wall -Wextra -pedantic -Werror -std=c++11 \
+           -O3 -fsanitize=address,undefined -fstack-protector-strong -lm
 
 # Regras padrão
 all: $(EXEC)

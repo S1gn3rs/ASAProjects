@@ -19,11 +19,9 @@ vector<vector<vector<int>>> dp, found;
 void fill_cayley_table(){
     cayley_table.assign(n+1, vector<int>(n+1, 0));
 
-    for (int i = 1; i <= n; i++){
-        for (int j = 1; j <= n; j++){
-            cin >> cayley_table[i][j];
-        }
-    }
+    for (int i = 1; i <= n; i++) 
+        for (int j = 1; j <= n; j++) cin >> cayley_table[i][j];
+
 }
 
 
