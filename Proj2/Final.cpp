@@ -21,7 +21,7 @@ struct pair_hash {
 };
 
 // Function to calculate metro connectivity
-int metro_connectivity(vector<set<int>>& updated_lines) {
+int metro_connectivity(vector<vector<int>>& updated_lines) {
 
     // Graph of lines: connect lines that share stations
     vector<vector<int>> line_graph(l + 1);
@@ -33,7 +33,7 @@ int metro_connectivity(vector<set<int>>& updated_lines) {
             if (updated_lines[j].empty()) continue;
 
             for (int station : updated_lines[i]) {
-                if (updated_lines[j].count(station)) {
+                if (updated_lines[j][station]) {
                     line_graph[i].push_back(j);
                     line_graph[j].push_back(i);
                     break;
@@ -87,7 +87,7 @@ int main() {
     unordered_map<pair<int,int>, vector<int>, pair_hash> edges;
 
 
-    vector<set<int>> lines(l + 1), updated_lines(l + 1);
+    vector<vector<int>> lines(l + 1, vector<int>(n + 1, 0)), updated_lines(l + 1, vector<int>(n + 1, 0));
 
 
     // Read edges and associate them with lines
@@ -96,8 +96,8 @@ int main() {
         cin >> x >> y >> line;
 
         line_edges[line]++; stations[x] = 1, stations[y] = 1;
-        lines[line].insert(x);
-        lines[line].insert(y);
+        lines[line][x] = 1;
+        lines[line][y] = 1;
 
         if(x > y) swap(x, y);
         edges[{x, y}].push_back(line);
@@ -133,8 +133,8 @@ int main() {
                 }
             }
         }
-        updated_lines[best_line].insert(edge.first);
-        updated_lines[best_line].insert(edge.second);
+        updated_lines[best_line][edge.first] = 1;
+        updated_lines[best_line][edge.second] = 1;
     }
 
 
