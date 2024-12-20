@@ -24,7 +24,7 @@ struct pair_hash {
 int metro_connectivity(vector<set<int>>& updated_lines) {
 
     // Graph of lines: connect lines that share stations
-    vector<vector<int>> line_graph(l + 1);
+    vector<set<int>> line_graph(l + 1);
 
     for (int i = 1; i <= l; ++i) {
         if (updated_lines[i].empty()) continue;
@@ -34,9 +34,8 @@ int metro_connectivity(vector<set<int>>& updated_lines) {
 
             for (int station : updated_lines[i]) {
                 if (updated_lines[j].count(station)) {
-                    line_graph[i].push_back(j);
-                    line_graph[j].push_back(i);
-                    break;
+                    line_graph[i].insert(j);
+                    line_graph[j].insert(i);
                 }
             }
         }
